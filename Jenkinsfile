@@ -16,7 +16,15 @@ node {
     }
 
     stage('Build'){
-        sh "mvn clean install"
+        sh "mvn clean compile"
+    }
+
+    stage('Test'){
+        sh "mvn test"
+    }
+
+    stage('Integration Test'){
+        sh "mvn failsafe:integration-test failsafe:verify"
     }
 
     stage('Sonar'){
@@ -26,6 +34,11 @@ node {
             echo "The sonar server could not be reached ${error}"
         }
      }
+
+    stage('package') {
+        sh "mvn package -DskipTests"
+        archiveArtifacts artifacts: 'target/*.war', fingerprint: true
+    }
 
     stage("Image Prune"){
         imagePrune(CONTAINER_NAME)

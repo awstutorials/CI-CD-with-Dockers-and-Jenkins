@@ -1,13 +1,5 @@
-FROM maven:3-alpine
-
-COPY pom.xml pipeline/
-
-COPY src/ pipeline/src/
-
-WORKDIR pipeline/
-
-RUN mvn clean install
-
-EXPOSE 8090
-
-ENTRYPOINT [ "java", "-jar", "/pipeline/target/jenkins-pipeline.jar"]
+FROM tomcat:8.0.51-jre8-alpine
+EXPOSE 8000
+RUN rm -rf /usr/local/tomcat/webapps/*
+COPY target/*.war /usr/local/tomcat/webapps/ROOT.war
+CMD ["catalina.sh","run"]
