@@ -1,0 +1,19 @@
+apiVersion: extensions/v1beta1
+kind: Deployment
+metadata:
+  labels:
+    io.kompose.service: todo-web-application
+  name: todo-web-application
+spec:
+  replicas: 1
+  template:
+    metadata:
+      labels:
+        io.kompose.service: todo-web-application
+    spec:
+      containers:
+        image: ravisankar/jenkins-pipeline
+        name: todo-web-application
+        ports:
+        - containerPort: 8080
+      restartPolicy: Always

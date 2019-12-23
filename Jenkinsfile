@@ -1,86 +1,67 @@
-def CONTAINER_NAME="jenkins-pipeline"
-def CONTAINER_TAG="latest"
-def DOCKER_HUB_USER="ravisankar"
-def HTTP_PORT="8081"
+pipeline {
 
-node {
+  environment {
+    PROJECT = "REPLACE_WITH_YOUR_PROJECT_ID"
+    APP_NAME = "gceme"
+    FE_SVC_NAME = "${APP_NAME}-frontend"
+    CLUSTER = "jenkins-cd"
+    CLUSTER_ZONE = "us-east1-d"
+    IMAGE_TAG = "gcr.io/${PROJECT}/${APP_NAME}:${env.BRANCH_NAME}.${env.BUILD_NUMBER}"
+    JENKINS_CRED = "${PROJECT}"
+  }
 
-    stage('Initialize'){
-        def dockerHome = tool 'myDocker'
-        def mavenHome  = tool 'myMaven'
-        env.PATH = "${dockerHome}/bin:${mavenHome}/bin:${env.PATH}"
-    }
-
-    stage('Checkout') {
-        checkout scm
-    }
-
-    stage('Build'){
-        sh "mvn clean compile"
-    }
-
-    stage('Test'){
-        sh "mvn test"
-    }
-
-    stage('Integration Test'){
-        sh "mvn failsafe:integration-test failsafe:verify"
-    }
-
-    stage('Sonar'){
-        try {
-            sh "mvn sonar:sonar"
-        } catch(error){
-            echo "The sonar server could not be reached ${error}"
+  agent {
+    kubernetes {
+      label 'sample-app'
+      defaultContainer 'jnlp'
+      yaml """
+apiVersion: v1
+kind: Pod
+metadata:
+labels:
+  component: ci
+spec:
+  # Use service account that can deploy to all namespaces
+  serviceAccountName: cd-jenkins
+  containers:
+  - name: golang
+    image: golang:1.10
+    command:
+    - cat
+    tty: true
+  - name: gcloud
+    image: gcr.io/cloud-builders/gcloud
+    command:
+    - cat
+    tty: true
+  - name: kubectl
+    image: gcr.io/cloud-builders/kubectl
+    command:
+    - cat
+    tty: true
+"""
+}
+  }
+  stages {
+    stage('Deploy Dev') {
+      // Developer Branches
+      //when {
+        //not { branch 'master' }
+        //not { branch 'canary' }
+      //}
+      steps {
+        container('kubectl') {
+          // Create namespace if it doesn't exist
+          sh("kubectl get ns ${env.BRANCH_NAME} || kubectl create ns ${env.BRANCH_NAME}")
+          // Don't use public load balancing for development branches
+          //sh("sed -i.bak 's#LoadBalancer#ClusterIP#' ./k8s/services/frontend.yaml")
+          //sh("sed -i.bak 's#gcr.io/cloud-solutions-images/gceme:1.0.0#${IMAGE_TAG}#' ./k8s/dev/*.yaml")
+          step([$class: 'KubernetesEngineBuilder',namespace: "${env.BRANCH_NAME}", projectId: env.PROJECT, clusterName: env.CLUSTER, zone: env.CLUSTER_ZONE, manifestPattern: 'k8s/services', credentialsId: env.JENKINS_CRED, verifyDeployments: false])
+          step([$class: 'KubernetesEngineBuilder',namespace: "${env.BRANCH_NAME}", projectId: env.PROJECT, clusterName: env.CLUSTER, zone: env.CLUSTER_ZONE, manifestPattern: 'k8s/dev', credentialsId: env.JENKINS_CRED, verifyDeployments: true])
+          echo 'To access your environment run `kubectl proxy`'
+          //echo "Then access your service via http://localhost:8001/api/v1/proxy/namespaces/${env.BRANCH_NAME}/services/${FE_SVC_NAME}:80/"
         }
-     }
-
-    stage('package') {
-        sh "mvn package -DskipTests"
-        archiveArtifacts artifacts: 'target/*.war', fingerprint: true
+      }
     }
-
-    stage("Image Prune"){
-        imagePrune(CONTAINER_NAME)
-    }
-
-    stage('Image Build'){
-        imageBuild(CONTAINER_NAME, CONTAINER_TAG)
-    }
-
-    stage('Push to Docker Registry'){
-        withCredentials([usernamePassword(credentialsId: 'dockerHubAccount', usernameVariable: 'USERNAME', passwordVariable: 'PASSWORD')]) {
-            pushToImage(CONTAINER_NAME, CONTAINER_TAG, USERNAME, PASSWORD)
-        }
-    }
-
-    stage('Run App'){
-        runApp(CONTAINER_NAME, CONTAINER_TAG, DOCKER_HUB_USER, HTTP_PORT)
-    }
-
-}
-
-def imagePrune(containerName){
-    try {
-        sh "docker image prune -f"
-        sh "docker stop $containerName"
-    } catch(error){}
-}
-
-def imageBuild(containerName, tag){
-    sh "docker build -t $containerName:$tag  -t $containerName --pull --no-cache ."
-    echo "Image build complete"
-}
-
-def pushToImage(containerName, tag, dockerUser, dockerPassword){
-    sh "docker login -u $dockerUser -p $dockerPassword"
-    sh "docker tag $containerName:$tag $dockerUser/$containerName:$tag"
-    sh "docker push $dockerUser/$containerName:$tag"
-    echo "Image push complete"
-}
-
-def runApp(containerName, tag, dockerHubUser, httpPort){
-    sh "docker pull $dockerHubUser/$containerName"
-    sh "docker run -d --rm -p $httpPort:$httpPort --name $containerName $dockerHubUser/$containerName:$tag"
-    echo "Application started on port: ${httpPort} (http)"
+  }
 }
