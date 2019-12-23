@@ -43,6 +43,16 @@ spec:
 }
   }
   stages {
+
+    stage('Image Build'){
+      steps {
+        container('gcloud') {
+      sh "docker build -t ravisankar/helloworld-h2:0.0.3  -t ravisankar/helloworld-h2 --pull --no-cache ."
+      echo "Image build complete"
+      }
+      }
+    }
+
     stage('Deploy Dev') {
       // Developer Branches
       //when {
