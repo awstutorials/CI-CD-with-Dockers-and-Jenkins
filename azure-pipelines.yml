@@ -25,6 +25,5 @@ steps:
   inputs:
     containerRegistry: 'DockerHub'
     repository: 'ravisankar'
-    command: 'buildAndPush'
-    Dockerfile: '**/Dockerfile'
+    command: 'push'
     tags: 'latest'
