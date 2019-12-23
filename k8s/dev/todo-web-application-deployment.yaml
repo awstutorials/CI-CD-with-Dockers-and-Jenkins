@@ -18,7 +18,7 @@ spec:
     spec:
       containers:
         - name: todo-web-application
-          image: ravisankar/todo-web-application-h2:0.0.1-SNAPSHOT
+          image: ravisankar/todo-web-application-h2:0.0.2-SNAPSHOT
           resources:
             requests:
               cpu: "100m"
