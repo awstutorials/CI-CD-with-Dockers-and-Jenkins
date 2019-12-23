@@ -23,6 +23,8 @@ steps:
 - task: Docker@2
   displayName: Build and Push
   inputs:
-    command: buildAndPush
-    repository: spring-demo
-    tags: latest
+    containerRegistry: 'DockerHub'
+    repository: 'ravisankar'
+    command: 'buildAndPush'
+    Dockerfile: '**/Dockerfile'
+    tags: 'latest'
