@@ -24,6 +24,6 @@ steps:
   displayName: Build and Push
   inputs:
     containerRegistry: 'DockerHub'
-    repository: 'ravisankar'
+    repository: 'ravisankar/todo-web-application-h2'
     command: 'push'
-    tags: 'latest'
+    tags: '0.0.2-SNAPSHOT'
