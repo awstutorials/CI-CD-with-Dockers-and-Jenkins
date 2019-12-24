@@ -27,3 +27,12 @@ steps:
     repository: 'ravisankar/todo-web-application-h2'
     command: 'push'
     tags: '0.0.2-SNAPSHOT'
+- task: CopyFiles@2
+  displayName: 'Copy Files to: $(build.artifactstagingdirectory)'
+  inputs:
+    SourceFolder: '$(system.defaultworkingdirectory)'
+    Contents: |
+     **/k8s/dev/*.yaml
+     **/k8s/services/*.yaml
+    TargetFolder: '$(build.artifactstagingdirectory)'
+  condition: succeededOrFailed()
