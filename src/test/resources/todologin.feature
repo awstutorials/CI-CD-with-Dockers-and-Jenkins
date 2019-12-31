@@ -8,4 +8,4 @@ Feature: ToDoApplication Login Feature
     Examples:
       |	name	|	password	|	output		|
       |	in28minutes	|	dummy	    |	in28Minutes	|
-      |	in28minutes	|	wrong	    |	failure	|
+      |	in28minutes	|	wrong	    |	failure1	|

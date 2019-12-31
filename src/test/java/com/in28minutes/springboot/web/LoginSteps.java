@@ -23,7 +23,7 @@ public class LoginSteps {
         WebDriver driver = new ChromeDriver();
         try {
             WebDriverWait wait = new WebDriverWait(driver, 3);
-            driver.get("http://localhost:8081");
+            driver.get("http://localhost:8082");
             driver.findElement(By.id("username")).sendKeys(name);
             driver.findElement(By.id("password")).sendKeys(password);
             driver.findElement(By.xpath("/html/body/div[@class='container']/form[@class='form-signin']/button[@class='btn btn-lg btn-primary btn-block']")).click();
