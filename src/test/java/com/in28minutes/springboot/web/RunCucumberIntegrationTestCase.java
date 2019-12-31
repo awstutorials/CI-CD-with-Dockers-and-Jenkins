@@ -6,6 +6,6 @@ import org.junit.Ignore;
 import org.junit.runner.RunWith;
 @RunWith(Cucumber.class)
 @CucumberOptions(monochrome = true, features = "src/test/resources", plugin = { "pretty" })
-//@Ignore
+@Ignore
 public class RunCucumberIntegrationTestCase {
 }
