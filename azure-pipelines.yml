@@ -1,0 +1,45 @@
+trigger:
+- master
+
+pool:
+  vmImage: 'ubuntu-latest'
+
+steps:
+- task: Docker@2
+  displayName: Login to ACR
+  inputs:
+    containerRegistry: 'DockerHub'
+    command: 'login'
+- task: Maven@3
+  inputs:
+    mavenPomFile: 'pom.xml'
+    mavenOptions: '-Xmx3072m'
+    javaHomeOption: 'JDKVersion'
+    jdkVersionOption: '1.8'
+    jdkArchitectureOption: 'x64'
+    publishJUnitResults: false
+    testResultsFiles: '**/surefire-reports/TEST-*.xml'
+    goals: 'package -Dmaven.test.skip=true'
+- task: Docker@2
+  displayName: Build and Push
+  inputs:
+    containerRegistry: 'DockerHub'
+    repository: 'ravisankar/todo-web-application-h2'
+    command: 'push'
+    tags: '0.0.2-SNAPSHOT'
+- task: CopyFiles@2
+  displayName: 'Copy Files to: $(build.artifactstagingdirectory)'
+  inputs:
+    SourceFolder: '$(system.defaultworkingdirectory)'
+    Contents: |
+     **/k8s/dev/*.yaml
+     **/k8s/services/*.yaml
+    TargetFolder: '$(build.artifactstagingdirectory)'
+  condition: succeededOrFailed()
+
+- task: PublishBuildArtifacts@1
+  displayName: 'Publish Artifact: cicdwithdockerandazuredevops'
+  inputs:
+    PathtoPublish: '$(build.artifactstagingdirectory)'
+    ArtifactName: 'cicdwithdockerandazuredevops'
+  condition: succeededOrFailed()
