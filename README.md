@@ -1,13 +1,27 @@
 # CI-CD-with-Dockers-and-Jenkins
 
 ### Jenkins Local Deployment
+start Jenkins using docker compose
+```
+docker-compose -f docker-compose.yml up --build
+```
+start sonar
+```
+docker run -d --name sonarqube -p 9000:9000 sonarqube
+```
 1. https://youtu.be/2SY8mvsJ66I
-2. 
 
 ### Cucumber
 1. https://youtu.be/uZ1Zvvty9jI
 
 ### Azure devops
+```
+brew update && brew install azure-cli
+az login
+az group create --name kubetutrg --location westeurope
+az aks create --resource-group kubetutrg --name kubetutcluster --node-count 2 --enable-addons monitoring --generate-ssh-keys
+az aks get-credentials --resource-group kubetutrg --name kubetutcluster
+```
 1. https://youtu.be/XfViBcEUXb8
 2. https://youtu.be/Ufvp0fAsVkk
 
