@@ -9,7 +9,7 @@ pipeline {
 
   agent {
     kubernetes {
-      label 'sample-app'
+      label 'todo-app'
       defaultContainer 'jnlp'
       yaml """
 apiVersion: v1
