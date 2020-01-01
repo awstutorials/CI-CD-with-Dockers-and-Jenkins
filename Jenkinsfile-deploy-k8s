@@ -26,6 +26,11 @@ spec:
     command:
     - cat
     tty: true
+  - name: docker
+    image: gcr.io/cloud-builders/docker
+    command:
+    - cat
+    tty: true
   - name: gcloud
     image: gcr.io/cloud-builders/gcloud
     command:
@@ -44,6 +49,21 @@ spec:
       steps {
         container('mvn') {
           sh("mvn clean test")
+        }
+      }
+    }
+    stage('package') {
+      steps {
+        container('mvn') {
+          sh("mvn package -DskipTests=true")
+          step([$class: 'ArtifactArchiver', artifacts: '**/target/*.war', fingerprint: true])
+        }
+      }
+    }
+    stage('build image') {
+      steps {
+        container('docker') {
+          sh(""docker build -t todo-webapp:1.0  -t todo-webapp --pull --no-cache ."")
         }
       }
     }
