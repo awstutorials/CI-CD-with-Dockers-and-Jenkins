@@ -21,6 +21,11 @@ spec:
   # Use service account that can deploy to all namespaces
   serviceAccountName: cd-jenkins
   containers:
+  - name: mvn
+    image: gcr.io/cloud-builders/mvn
+    command:
+    - cat
+    tty: true
   - name: gcloud
     image: gcr.io/cloud-builders/gcloud
     command:
@@ -35,6 +40,13 @@ spec:
 }
   }
   stages {
+    stage('build') {
+      steps {
+        container('mvn') {
+          sh("mvn clean test")
+        }
+      }
+    }
     stage('Deploy Dev') {
       steps {
         container('kubectl') {
