@@ -52,14 +52,6 @@ spec:
         }
       }
     }
-    stage('package') {
-      steps {
-        container('mvn') {
-          sh("mvn package -DskipTests=true")
-          step([$class: 'ArtifactArchiver', artifacts: '**/target/*.war', fingerprint: true])
-        }
-      }
-    }
     stage('build image') {
       steps {
         container('docker') {
