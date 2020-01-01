@@ -1,17 +1,17 @@
 # CI-CD-with-Dockers-and-Jenkins
 
-###Jenkins Local Deployment
+### Jenkins Local Deployment
 1. https://youtu.be/2SY8mvsJ66I
 2. 
 
-###Cucumber
+### Cucumber
 1. https://youtu.be/uZ1Zvvty9jI
 
-###Azure devops
+### Azure devops
 1. https://youtu.be/XfViBcEUXb8
 2. https://youtu.be/Ufvp0fAsVkk
 
-###Jenkins on Google cloud Kubernetes
+### Jenkins on Google cloud Kubernetes
 
 1. Create a project in Google cloud. I used the name in28minutes-2
 2. Follow the instructions here to create kubernetes cluster & install Jenkins on that cluster using Helm(https://cloud.google.com/solutions/jenkins-on-kubernetes-engine-tutorial)
