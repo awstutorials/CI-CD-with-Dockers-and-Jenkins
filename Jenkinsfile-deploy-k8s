@@ -63,7 +63,7 @@ spec:
     stage('build image') {
       steps {
         container('docker') {
-          sh(""docker build -t todo-webapp:1.0  -t todo-webapp --pull --no-cache ."")
+          sh("docker build -t todo-webapp:1.0  -t todo-webapp --pull --no-cache .")
         }
       }
     }
