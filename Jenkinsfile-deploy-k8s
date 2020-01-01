@@ -58,15 +58,14 @@ spec:
     stage('build') {
       steps {
         container('mvn') {
-          sh("mvn clean test")
+          sh("mvn clean build")
+          step([$class: 'ArtifactArchiver', artifacts: '**/target/*.war', fingerprint: true])
         }
       }
     }
     stage('build image') {
       steps {
         container('docker') {
-          sh("mvn package -DskipTests=true")
-          step([$class: 'ArtifactArchiver', artifacts: '**/target/*.war', fingerprint: true])
           sh("docker build -t todo-webapp:1.0  -t todo-webapp --pull --no-cache .")
         }
       }
