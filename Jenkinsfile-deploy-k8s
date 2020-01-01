@@ -58,7 +58,7 @@ spec:
     stage('build') {
       steps {
         container('mvn') {
-          sh("mvn clean build")
+          sh("mvn clean package")
           step([$class: 'ArtifactArchiver', artifacts: '**/target/*.war', fingerprint: true])
         }
       }

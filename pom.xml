@@ -182,14 +182,14 @@
 				<groupId>com.spotify</groupId>
 				<artifactId>dockerfile-maven-plugin</artifactId>
 				<version>1.4.10</version>
-				<executions>
+				<!-- <executions>
 					<execution>
 						<id>default</id>
 						<goals>
 							<goal>build</goal>
 						</goals>
 					</execution>
-				</executions>
+				</executions> -->
 				<configuration>
 					<repository>ravisankar/${project.name}</repository>
 					<tag>${project.version}</tag>
