@@ -26,6 +26,7 @@ az aks get-credentials --resource-group kubetutrg --name kubetutcluster
 2. https://youtu.be/Ufvp0fAsVkk
 
 ### Jenkins on Google cloud Kubernetes
+1. https://youtu.be/Q5jk5CBGFIQ
 
 1. Create a project in Google cloud. I used the name in28minutes-2
 2. Follow the instructions here to create kubernetes cluster & install Jenkins on that cluster using Helm(https://cloud.google.com/solutions/jenkins-on-kubernetes-engine-tutorial)
